@@ -1,9 +1,51 @@
-import example.pepita
+import personas.*
+import emociones.*
 
-describe "group of tests for pepita" {
 
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
-  }
 
+test "La alegría nunca tiene intensidad negativa" {
+    const alegria = new Alegria(intensidad=30)
+
+    // Disminuir más de lo que tiene
+    alegria.disminuirIntensidad(50)
+    
+    // Verificar que la intensidad sea positiva
+    assert.equals(20, alegria.intensidad())
+}
+
+
+test "Todos los integrantes de un grupo viven el mismo evento" {
+    // Crear personas
+    const alan = new Persona(edad = 19)
+    const maria = new Persona(edad = 16) // Adolescente
+
+    // Crear emociones y agregarlas a las personas
+    const alegriaAlan = new Alegria(intensidad=45)
+
+    const furiaMaria = new Furia()
+    furiaMaria.aprenderPalabrota("hijo de re mil")
+
+    alan.agregarEmocion(alegriaAlan)
+    maria.agregarEmocion(furiaMaria)
+
+    // Grupo de personas
+    const grupo = [alan, maria]
+
+    // Crear un evento que todas las personas vivirán
+    const eventoFuerte = new Evento(impacto = 50, descripcion = "Un evento importante")
+
+    // Hacer que todas las personas vivan el mismo evento
+    grupo.forEach { persona => persona.vivirEvento(eventoFuerte) }
+
+    // no se por que tira error en el test, en el diagrama figura que se sumo bien el evento experimentado
+    assert.equals(1, alegriaAlan.eventosExperimentados())
+    assert.equals(1, furiaMaria.eventosExperimentados())
+
+    
+    // Verificar el estado de las emociones después del evento
+    assert.equals(0, alegriaAlan.intensidad()) // Alegría debe quedar en 0 (40 - 50, pero nunca negativa)
+    assert.equals(30,furiaMaria.intensidad()) // Furia debe quedar en 30 (80 - 50)
+
+    // Verificar si la furia de María olvidó una palabrota
+    assert.equals(furiaMaria.palabrotas().size(), 0) // Solo había una, debe eliminarse
 }
